@@ -1,18 +1,23 @@
 # 🚀 Multi API Serverless ETL Pipeline
 
+> An event-driven ETL pipeline built with AWS that automatically processes data from multiple public APIs using Amazon S3, AWS Lambda, and DynamoDB.
+
 ![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
-![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?style=for-the-badge&logo=awslambda)
-![Amazon S3](https://img.shields.io/badge/Amazon-S3-red?style=for-the-badge&logo=amazons3)
-![DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-blue?style=for-the-badge&logo=amazondynamodb)
-![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-black?style=for-the-badge&logo=githubactions)
+![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=for-the-badge&logo=awslambda)
+![Amazon S3](https://img.shields.io/badge/Amazon-S3-569A31?style=for-the-badge&logo=amazons3)
+![Amazon DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=for-the-badge&logo=amazondynamodb)
+![CloudWatch](https://img.shields.io/badge/Amazon-CloudWatch-FF4F8B?style=for-the-badge&logo=amazoncloudwatch)
+![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions)
 
 ---
 
-## 📌 Project Overview
+## 📖 Overview
 
-Multi API Serverless ETL is an AWS-based event-driven data pipeline that automatically collects data from multiple public APIs, stores raw JSON files in Amazon S3, processes them using AWS Lambda, and saves the transformed data into Amazon DynamoDB.
+This project demonstrates a **serverless ETL (Extract, Transform, Load) pipeline** on AWS.
 
-The project follows a serverless architecture, making it scalable, lightweight, and easy to maintain.
+Data is collected from multiple public APIs, uploaded to **Amazon S3**, automatically processed by **AWS Lambda**, and stored in **Amazon DynamoDB**. The entire workflow is event-driven, meaning the pipeline starts automatically whenever a new JSON file is uploaded to S3.
+
+The project is modular, scalable, and easy to extend by adding new APIs and processing Lambdas.
 
 ---
 
