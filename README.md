@@ -1,302 +1,345 @@
 # 🚀 Multi API Serverless ETL Pipeline
 
-> An event-driven ETL pipeline built with AWS that automatically processes data from multiple public APIs using Amazon S3, AWS Lambda, and DynamoDB.
+<p align="center">
+  An event-driven serverless ETL pipeline built on AWS that automatically processes data from multiple public APIs using Amazon S3, AWS Lambda, and Amazon DynamoDB.
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
-![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=for-the-badge&logo=awslambda)
-![Amazon S3](https://img.shields.io/badge/Amazon-S3-569A31?style=for-the-badge&logo=amazons3)
-![Amazon DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=for-the-badge&logo=amazondynamodb)
-![CloudWatch](https://img.shields.io/badge/Amazon-CloudWatch-FF4F8B?style=for-the-badge&logo=amazoncloudwatch)
-![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions)
-
----
-
-## 📖 Overview
-
-This project demonstrates a **serverless ETL (Extract, Transform, Load) pipeline** on AWS.
-
-Data is collected from multiple public APIs, uploaded to **Amazon S3**, automatically processed by **AWS Lambda**, and stored in **Amazon DynamoDB**. The entire workflow is event-driven, meaning the pipeline starts automatically whenever a new JSON file is uploaded to S3.
-
-The project is modular, scalable, and easy to extend by adding new APIs and processing Lambdas.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/AWS-Lambda-FF9900?style=for-the-badge&logo=awslambda&logoColor=white">
+  <img src="https://img.shields.io/badge/Amazon-S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
+  <img src="https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=for-the-badge&logo=amazondynamodb&logoColor=white">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Amazon-CloudWatch-FF4F8B?style=for-the-badge&logo=amazoncloudwatch&logoColor=white">
+  <img src="https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
+</p>
 
 ---
 
-## 🎯 Project Objective
-
-The objective of this project is to build a fully automated ETL (Extract, Transform, Load) pipeline using AWS services without managing any servers.
-
-Instead of manually processing data, the system automatically detects uploaded files, routes them to the correct processing Lambda, transforms the data, and stores it in DynamoDB.
+| Project | Multi API Serverless ETL Pipeline |
+|----------|----------------------------------|
+| Language | Python 3.13 |
+| Architecture | Event-Driven Serverless ETL |
+| Cloud Services | Amazon S3, AWS Lambda, DynamoDB, CloudWatch |
+| CI/CD | GitHub Actions |
 
 ---
+## 🏗️ Architecture Overview
 
-# 🏗️ Architecture
+The following diagram illustrates the complete event-driven ETL workflow implemented in this project.
 
+```mermaid
+
+flowchart LR
+A[Public APIs] --> B[Fetch Scripts]
+B --> C[Amazon S3]
+C --> D[Router Lambda]
+D --> E[Weather]
+D --> F[Earthquake]
+D --> G[Product]
+D --> H[Transit]
+E --> I[DynamoDB]
+F --> J[DynamoDB]
+G --> K[DynamoDB]
+H --> L[DynamoDB]
 ```
 
-                 Public APIs
-                       │
-                       ▼
-            Python Fetch Scripts
-                       │
-                       ▼
-                  Amazon S3
-                       │
-              Object Created Event
-                       │
-                       ▼
-                Router Lambda
-          ┌────────┼────────┬────────┐
-          ▼        ▼        ▼        ▼
-      Weather  Earthquake Product Transit
-        Lambda    Lambda    Lambda   Lambda
-          │         │         │         │
-          ▼         ▼         ▼         ▼
-       DynamoDB  DynamoDB  DynamoDB  DynamoDB
-                       │
-                       ▼
-                 CloudWatch Logs
+### Architecture Summary
 
+- Python scripts collect data from multiple public APIs.
+- Raw JSON files are uploaded to Amazon S3.
+- Amazon S3 triggers the Router Lambda using an ObjectCreated event.
+- The Router Lambda invokes the appropriate processing Lambda based on the uploaded dataset.
+- Each Lambda validates and transforms the data before storing it in its corresponding DynamoDB table.
+- Amazon CloudWatch records execution logs for monitoring and debugging.
+---
+
+# 📖 Project Overview
+
+This project demonstrates a **multi-source event-driven ETL (Extract, Transform, Load) pipeline** built on AWS.
+
+Data is collected from four public APIs (Weather, Earthquake, Product, and Transit) using Python fetch scripts. The generated JSON files are uploaded to Amazon S3, where an `ObjectCreated` event automatically triggers a Router Lambda.
+
+The Router Lambda identifies the uploaded dataset and invokes the corresponding processing Lambda. Each Lambda validates, transforms, and stores the processed data into its dedicated Amazon DynamoDB table. Execution logs are captured in Amazon CloudWatch for monitoring and debugging.
+
+The project follows a modular architecture, making it easy to maintain and extend with additional data sources.
+
+---
+
+## ✨ Features
+
+- Event-driven serverless ETL architecture
+- Integration with four public APIs
+- Automatic processing using Amazon S3 event notifications
+- Router Lambda for dynamic dataset routing
+- Dedicated Lambda function for each dataset
+- Shared utility modules for reusable code
+- Automatic data validation and transformation
+- Structured storage using Amazon DynamoDB
+- Centralized monitoring with Amazon CloudWatch
+- Automated deployment using GitHub Actions
+
+---
+
+## ⚙️ Workflow
+
+```text
+Public APIs
+     │
+     ▼
+Python Fetch Scripts
+     │
+     ▼
+Amazon S3 Bucket
+     │
+     ▼
+ObjectCreated Event
+     │
+     ▼
+Router Lambda
+     │
+┌────┼────────┬────────┐
+▼    ▼        ▼        ▼
+Weather  Earthquake  Product  Transit
+Lambda    Lambda     Lambda   Lambda
+│          │          │        │
+▼          ▼          ▼        ▼
+Weather    Earthquake Product  Transit
+Table      Table      Table    Table
+     │
+     ▼
+Amazon CloudWatch
 ```
-
----
-
-# ⚙️ Workflow
-
-### Step 1
-
-Python scripts fetch data from different public APIs.
-
-- Weather API
-- Earthquake API
-- Product API
-- Transit API
-
----
-
-### Step 2
-
-The fetched JSON files are uploaded to Amazon S3.
-
-Example:
-
-```
-
-weather/weather.json
-earthquake/earthquake.json
-product/product.json
-transit/transit.json
-
-```
-
----
-
-### Step 3
-
-Amazon S3 automatically triggers the Router Lambda.
-
----
-
-### Step 4
-
-The Router Lambda checks which folder the uploaded file belongs to and invokes the correct processing Lambda.
-
-Example
-
-```
-
-weather/ → Weather Lambda
-product/ → Product Lambda
-
-```
-
----
-
-### Step 5
-
-The processing Lambda:
-
-- Reads the JSON
-- Validates required fields
-- Transforms the data
-- Stores it in DynamoDB
-
----
-
-### Step 6
-
-CloudWatch stores execution logs for monitoring and debugging.
-
----
-
-# ✨ Features
-
-- Event-driven architecture
-- Serverless ETL pipeline
-- Automatic S3 triggers
-- Router Lambda for intelligent routing
-- Modular Python code
-- Shared utility functions
-- CloudWatch logging
-- DynamoDB integration
-- GitHub Actions CI
-- Easy to extend with new APIs
-
 ---
 
 # ☁️ AWS Services Used
 
-| Service | Purpose |
-|----------|---------|
-| Amazon S3 | Store raw JSON files |
-| AWS Lambda | Process uploaded files |
-| Amazon DynamoDB | Store processed data |
-| Amazon CloudWatch | Logs and monitoring |
-| IAM | Permissions and security |
+| AWS Service | Purpose |
+|-------------|---------|
+| **Amazon S3** | Stores raw JSON files fetched from public APIs |
+| **AWS Lambda** | Processes uploaded datasets and performs ETL operations |
+| **Amazon DynamoDB** | Stores transformed data for each dataset |
+| **Amazon CloudWatch** | Captures execution logs and monitors Lambda functions |
+| **AWS IAM** | Manages permissions for AWS resources |
+| **GitHub Actions** | Automates CI/CD workflow for the project |
 
 ---
 
-# 📂 Project Structure
+# 📁 Project Structure
 
-```
-
-multi-api-serverless-etl
-
+```text
+multi-api-serverless-etl/
+│
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
 │
-├── data/
-├── diagrams/
-├── docs/
-├── infra/
-│
 ├── lambdas/
+│   ├── router/
 │   ├── weather/
 │   ├── earthquake/
 │   ├── product/
-│   ├── transit/
-│   └── router/
+│   └── transit/
 │
 ├── scripts/
+│   ├── fetch_weather.py
+│   ├── fetch_earthquake.py
+│   ├── fetch_product.py
+│   └── fetch_transit.py
+│
 ├── shared/
+│   ├── aws_clients.py
+│   ├── config.py
+│   ├── dynamodb_helper.py
+│   ├── logger.py
+│   ├── responses.py
+│   ├── s3_helper.py
+│   └── validators.py
+│
+├── docs/
+│   └── screenshots/
+│
 ├── tests/
 │
 ├── requirements.txt
 ├── buildspec.yml
-├── README.md
-└── .gitignore
-
+└── README.md
 ```
-
----
-
-# 🛠️ Tech Stack
-
-- Python
-- AWS Lambda
-- Amazon S3
-- Amazon DynamoDB
-- Amazon CloudWatch
-- Git
-- GitHub
-- GitHub Actions
-
----
-
-# 🚀 How to Run
-
-1. Clone the repository.
-
-```
-
-git clone <repository-url>
-
-```
-
-2. Install dependencies.
-
-```
-
-pip install -r requirements.txt
-
-```
-
-3. Run fetch scripts.
-
-```
-
-python scripts/weather_fetch.py
-
-```
-
-4. Upload generated JSON files to S3.
-
-5. The pipeline will automatically process the data.
-
----
-
-# 📊 Sample Output
-
-### Weather Table
-
-| Timestamp | Temperature | Humidity |
-|------------|-------------|----------|
-| 2026-07-02T... | 26°C | 71% |
-
----
-
-### Product Table
-
-| Product | Category | Price |
-|----------|----------|-------|
-| Essence Mascara | Beauty | 9.99 |
-
----
-
-### Earthquake Table
-
-| Magnitude | Place |
-|------------|-------|
-| 2.4 | Alaska |
-
----
-
-### Transit Table
-
-| Stop | Municipality |
-|------|--------------|
-| 13818 | Weymouth |
-
 ---
 
 # 📸 Project Screenshots
 
-Add screenshots here:
+## Amazon S3 Bucket
 
-- S3 Bucket
-- Lambda Functions
-- Router Lambda
-- CloudWatch Logs
-- DynamoDB Tables
-- GitHub Actions
+Raw JSON files uploaded to the S3 bucket trigger the event-driven ETL pipeline.
 
----
-
-# 🔮 Future Improvements
-
-- API Gateway Integration
-- SNS Notifications
-- AWS Step Functions
-- Infrastructure as Code (Terraform / CloudFormation)
-- Monitoring Dashboard
-- Data Analytics Dashboard
+<p align="center">
+<img src="docs/screenshots/s3-bucket.png" width="900">
+</p>
 
 ---
 
-# 👨‍💻 Author
+## AWS Lambda Functions
+
+All Lambda functions deployed for routing and processing different datasets.
+
+<p align="center">
+<img src="docs/screenshots/lambda-functions.png" width="900">
+</p>
+
+---
+
+## Router Lambda
+
+The Router Lambda identifies the uploaded dataset and invokes the corresponding processing Lambda.
+
+<p align="center">
+<img src="docs/screenshots/router-lambda.png" width="900">
+</p>
+
+---
+
+## 🌦 Weather Pipeline
+
+Weather data successfully processed and stored in the Weather DynamoDB table.
+
+| CloudWatch Logs | DynamoDB |
+|-----------------|----------|
+| ![](docs/screenshots/weather-cloudwatch.png) | ![](docs/screenshots/weather-dynamodb.png) |
+
+---
+
+## 🌍 Earthquake Pipeline
+
+Earthquake data processed from the public API and stored in DynamoDB.
+
+| CloudWatch Logs | DynamoDB |
+|-----------------|----------|
+| ![](docs/screenshots/earthquake-cloudwatch.png) | ![](docs/screenshots/earthquake-dynamodb.png) |
+
+---
+
+## 🛒 Product Pipeline
+
+Product dataset transformed and stored successfully in DynamoDB.
+
+| CloudWatch Logs | DynamoDB |
+|-----------------|----------|
+| ![](docs/screenshots/product-cloudwatch.png) | ![](docs/screenshots/product-dynamodb.png) |
+
+---
+
+## 🚌 Transit Pipeline
+
+Transit records processed automatically and stored in DynamoDB.
+
+| CloudWatch Logs | DynamoDB |
+|-----------------|----------|
+| ![](docs/screenshots/transit-cloudwatch.png) | ![](docs/screenshots/transit-dynamodb.png) |
+
+---
+
+## GitHub Repository
+
+Complete source code hosted on GitHub.
+
+<p align="center">
+<img src="docs/screenshots/github-repository.png" width="900">
+</p>
+
+---
+
+## GitHub Actions
+
+Continuous Integration workflow validating every push to the repository.
+
+<p align="center">
+<img src="docs/screenshots/github-actions.png" width="900">
+</p>
+
+---
+## GitHub Repository
+
+Project source code hosted on GitHub.
+
+<p align="center">
+<img src="docs/screenshots/github-repository.png" width="900">
+</p>
+
+---
+
+# ▶️ Running Locally
+
+### Clone the repository
+
+```bash
+git clone https://github.com/AdityaaaTiwari/multi-api-serverless-etl.git
+```
+
+### Navigate to the project directory
+
+```bash
+cd multi-api-serverless-etl
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Configure AWS CLI
+
+```bash
+aws configure
+```
+
+Provide your:
+- AWS Access Key ID
+- AWS Secret Access Key
+- Default Region (for example: `ap-south-1`)
+- Output Format (`json`)
+
+### Run the fetch scripts
+
+```bash
+python scripts/fetch_weather.py
+python scripts/fetch_earthquake.py
+python scripts/fetch_product.py
+python scripts/fetch_transit.py
+```
+
+### Upload JSON files to Amazon S3
+
+The uploaded files automatically trigger the Router Lambda, which invokes the corresponding processing Lambda.
+
+### Verify the pipeline
+
+- Check Amazon CloudWatch Logs for execution details.
+- Verify processed records in the corresponding Amazon DynamoDB tables.
+
+> **Note:** This project follows an event-driven architecture. No manual Lambda execution is required after uploading files to Amazon S3.
+
+---
+
+# 🚀 Future Improvements
+
+- Add Amazon API Gateway to expose processed data through REST APIs.
+- Integrate Amazon SNS for event notifications.
+- Deploy infrastructure using Terraform or AWS CloudFormation.
+- Add automated unit and integration testing.
+- Support additional public APIs with minimal configuration.
+- Improve monitoring with Amazon CloudWatch Dashboards and Alarms.
+---
+
+# 👤 Author
 
 **Aditya Tiwari**
 
-B.Tech CSE Student
+B.Tech Computer Science Engineering
 
-AWS | Python | Data Engineering | Cloud Computing
+- **GitHub:** (https://github.com/AdityaaaTiwari)
+- **LinkedIn:** (https://www.linkedin.com/in/aditya-tiwari-a99739342/)
+
+If you found this project helpful, consider giving it a ⭐ on GitHub. Your support is appreciated!
