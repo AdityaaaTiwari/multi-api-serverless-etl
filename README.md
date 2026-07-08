@@ -29,22 +29,38 @@
 
 The following diagram illustrates the complete event-driven ETL workflow implemented in this project.
 
-```mermaid
-
-flowchart LR
-A[Public APIs] --> B[Fetch Scripts]
-B --> C[Amazon S3]
-C --> D[Router Lambda]
-D --> E[Weather]
-D --> F[Earthquake]
-D --> G[Product]
-D --> H[Transit]
-E --> I[DynamoDB]
-F --> J[DynamoDB]
-G --> K[DynamoDB]
-H --> L[DynamoDB]
-```
-
+                 +----------------------+
+                 |     Public APIs      |
+                 +----------------------+
+                           |
+                           v
+                 +----------------------+
+                 |    Fetch Scripts     |
+                 +----------------------+
+                           |
+                           v
+                 +----------------------+
+                 |      Amazon S3       |
+                 +----------------------+
+                           |
+                           v
+                 +----------------------+
+                 |    Router Lambda     |
+                 +----------------------+
+                   /      |      |      \
+                  /       |      |       \
+                 v        v      v        v
+        +-----------+ +-----------+ +-----------+ +-----------+
+        | Weather   | |Earthquake | | Product   | | Transit   |
+        |  Lambda   | |  Lambda   | |  Lambda   | |  Lambda   |
+        +-----------+ +-----------+ +-----------+ +-----------+
+             |              |              |              |
+             v              v              v              v
+      +------------+ +------------+ +------------+ +------------+
+      | Weather    | |Earthquake  | | Product    | | Transit    |
+      | DynamoDB   | | DynamoDB   | | DynamoDB   | | DynamoDB   |
+      +------------+ +------------+ +------------+ +------------+
+      
 ### Architecture Summary
 
 - Python scripts collect data from multiple public APIs.
